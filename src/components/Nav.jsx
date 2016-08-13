@@ -1,7 +1,7 @@
-var Nav = (props) => (
+var Nav = ({searchHandler}) => (
   <nav className="navbar">
     <div className="col-md-6 col-md-offset-3">
-      <Search searchHandler={props.searchHandler} />
+      <Search searchHandler={searchHandler} />
     </div>
   </nav>
 );

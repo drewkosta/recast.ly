@@ -9,32 +9,28 @@ class App extends React.Component {
   }
 
   componentWillMount () {
-    console.log('mounted');
     this.searchYouTube('cats', function(data) {
-      console.log(data);
       this.setState({
         videoList: data,
         currentVideo: data[0]
       });
-    });
+    }.bind(this));
   }
 
   searchYouTube (query, callback) {
-    console.log('search invoked');
     $.ajax({
       url: 'https://www.googleapis.com/youtube/v3/search',
       type: 'GET',
       data: {
         key: window.YOUTUBE_API_KEY,
-        q: 'query',
+        q: query,
         part: 'snippet',
         maxResults: 10,
         type: 'video',
         videoEmbeddable: true
       },
       success: data => {
-        console.log(data);
-        callback(data);
+        callback(data.items);
       },
       error: err => {
         console.error(err);
@@ -42,8 +38,13 @@ class App extends React.Component {
     });
   }
 
-  searchHandler (string) {
-    this.searchYouTube(string);
+  searchHandler (event) {
+    this.searchYouTube(event.target.value, function(data) {
+      this.setState({
+        videoList: data,
+        currentVideo: data[0]
+      });
+    }.bind(this));
   }
 
   onClickHandler (video) {
