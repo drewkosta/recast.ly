@@ -31,7 +31,7 @@ var hasSameShape = function(objectOne, objectTwo) {
   return true;
 };
 
-describe('searchYouTube', function() {
+xdescribe('searchYouTube', function() {
   var requests, xhr;
 
   // Sinon temporarily hijacks all outgoing AJAX requests with `useFakeXMLHttpRequest`

@@ -1,31 +1,49 @@
 class App extends React.Component {
   constructor () {
     super();
-    this.getVideo();
     this.state = {
       // Initialize the state of App to keep track of all the videos in the video list and the current video in the player. Pass this state down as props to its children components. Continue to use the example data.
-      currentVideo: window.fakeVideoData[0],
-      videoList: window.fakeVideoData
+      videoList: window.exampleVideoData, 
+      currentVideo: window.exampleVideoData[0]
     };
   }
 
-  getVideo () {
+  componentWillMount () {
+    console.log('mounted');
+    this.searchYouTube('cats', function(data) {
+      console.log(data);
+      this.setState({
+        videoList: data,
+        currentVideo: data[0]
+      });
+    });
+  }
+
+  searchYouTube (query, callback) {
+    console.log('search invoked');
     $.ajax({
-      url: 'https://www.googleapis.com/youtube/v3/channels',
+      url: 'https://www.googleapis.com/youtube/v3/search',
       type: 'GET',
       data: {
-        q: 'cats',
+        key: window.YOUTUBE_API_KEY,
+        q: 'query',
         part: 'snippet',
-        key: window.YOUTUBE_API_KEY
+        maxResults: 10,
+        type: 'video',
+        videoEmbeddable: true
       },
       success: data => {
         console.log(data);
+        callback(data);
       },
       error: err => {
         console.error(err);
       }
     });
+  }
 
+  searchHandler (string) {
+    this.searchYouTube(string);
   }
 
   onClickHandler (video) {
@@ -37,7 +55,7 @@ class App extends React.Component {
   render () {
     return (
       <div>
-        <Nav />
+        <Nav searchHandler={this.searchHandler.bind(this)}/>
         <div className="col-md-7">
           <VideoPlayer video={this.state.currentVideo} />
         </div>
@@ -48,7 +66,6 @@ class App extends React.Component {
     );
   }
 }
-
 // In the ES6 spec, files are "modules" and do not share a top-level scope
 // `var` declarations will only exist globally where explicitly defined
 window.App = App;
